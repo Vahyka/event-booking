@@ -1,0 +1,83 @@
+.container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+    color: var(--primary-main);
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .eventsGrid {
+    margin-top: 2rem;
+  }
+  
+  .modalContent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--background-paper);
+    padding: 2rem;
+    border-radius: 16px;
+    outline: none;
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .modalHeader {
+    margin-bottom: 1.5rem;
+  }
+  
+  .modalTitle {
+    color: var(--primary-main);
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .modalDescription {
+    color: var(--secondary-main);
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
+  
+  .seatPickerContainer {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: var(--background-default);
+    border-radius: 12px;
+  }
+  
+  /* Адаптивность */
+  @media (max-width: 768px) {
+    .container {
+      padding: 1rem;
+    }
+    
+    .title {
+      font-size: 2rem;
+    }
+    
+    .modalContent {
+      padding: 1rem;
+    }
+    
+    .modalTitle {
+      font-size: 1.5rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .title {
+      font-size: 1.75rem;
+    }
+    
+    .modalDescription {
+      font-size: 1rem;
+    }
+  }

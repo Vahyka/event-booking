@@ -1,0 +1,28 @@
+.grid {
+    display: grid;
+    grid-template-columns: repeat(10, 40px);
+    gap: 5px;
+    margin: 20px 0;
+  }
+  
+  .seat {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .seat:hover {
+    transform: scale(1.1);
+  }
+  
+  .available {
+    background: #4CAF50;
+  }
+  
+  .booked {
+    background: #f44336;
+    cursor: not-allowed;
+  }
