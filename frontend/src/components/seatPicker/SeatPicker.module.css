@@ -1,8 +1,8 @@
 .grid {
     display: grid;
     grid-template-columns: repeat(10, 40px);
-    gap: 5px;
-    margin: 20px 0;
+    gap: 3px;
+    margin: 10px 0;
   }
   
   .seat {
