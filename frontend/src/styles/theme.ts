@@ -3,16 +3,16 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#2A2F4F',    // Основной синий цвет
-      contrastText: '#fff' // Белый текст
+      main: '#cd4545',    
+      contrastText: '#fff', 
     },
     secondary: {
-      main: '#917FB3',    // Вторичный фиолетовый
-      light: '#E5BEEC'    // Светло-фиолетовый
+      main: '#f16821',    
+      light: '#E5BEEC',    
     },
     background: {
-      default: '#FDE2F3', // Розовый фон
-      paper: '#ffffff'    // Белый фон для карточек
+      default: '#e6dedd',
+      paper: '#ffffff',   
     }
   },
   typography: {
