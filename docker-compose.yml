@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: ./backend/api
+      dockerfile: Dockerfile
+    ports:
+      - "5005:5005"
+    volumes:
+      - ./backend/api:/app/backend
+      - /app/backend/node_modules
+    depends_on:
+      - db
+
+  auth-service:
+    build:
+      context: ./backend/auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "5004:5004"
+    volumes:
+      - ./backend/auth-service:/app/backend
+      - /app/backend/node_modules
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  db:
+    image: postgres:alpine
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}  
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+    restart: always
+
+  frontend-dev:
+    build:
+      context: ./frontend/
+      dockerfile: ./docker/dev.Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app/front
+      - /app/front/node_modules
+    depends_on:
+      - api
+      
+volumes:
+  postgres_data:
+networks:
+  app-network:
