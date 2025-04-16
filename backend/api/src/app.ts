@@ -1,34 +1,28 @@
 import express from 'express';
-import http from 'http';
+// import http from 'http';
 import dotenv from 'dotenv';
-import path, { dirname } from 'path';
-import { fileURLToPath } from 'url';
 import cors from 'cors';
-// import authRoutes from './routes/authRoutes.ts';
-import eventsRoutes from './routes/eventsRoutes.ts';
+import eventRouter from './routes/eventsRoutes'
+
 
 const app = express();
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-
-const __dirname = dirname(__filename);
-
 // Middleware 
 app.use(express.json());
-// Serves the HTML file from the /frontend directory
-app.use(express.static(path.join(__dirname, '../../frontend')));
 
 app.use(cors({
+    origin: "http://localhost:3000",  // Или process.env.FRONTEND_URL
     credentials: true,
-}))
+}));
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
-})
+app.use('/api/events', eventRouter);
 
-// Routes
-app.use('/events', eventsRoutes);
+app.get('/ping', (req, res) => {
+    console.log('someone pinged here!');
+    // req.get('/');
+    res.send('pong');
+});
 
 app.listen(process.env.PORT, ()=> {
     console.log(`Server is running on http://localhost:${process.env.PORT}/`);

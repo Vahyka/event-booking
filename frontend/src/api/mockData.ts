@@ -7,8 +7,8 @@ export const events: Event[] = [
     date: '2024-04-20T19:00',
     location: 'Московская консерватория',
     description: 'Исполнение всех 9 симфоний Людвига ван Бетховена',
-    image: 'https://example.com/beethoven.jpg',
-    seats: generateSeats(100, 20)
+    image: 'https://cdn.culture.ru/images/d145e976-ce56-5704-8247-7c4a6bc97758',
+    seats: generateSeats(100, 10)
   },
   {
     id: '2',
@@ -16,8 +16,8 @@ export const events: Event[] = [
     date: '2024-05-15T18:30',
     location: 'Концертный зал Чайковского',
     description: 'Четыре скрипичных концерта в исполнении оркестра "Виртуозы Москвы"',
-    image: 'https://example.com/vivaldi.jpg',
-    seats: generateSeats(80, 15)
+    image: 'https://www.nsartmuseum.ru/public/images/news/507/1669020988.webp',
+    seats: generateSeats(100, 10)
   },
   {
     id: '3',
@@ -25,8 +25,8 @@ export const events: Event[] = [
     date: '2024-06-10T20:00',
     location: 'Кафедральный собор св. Петра',
     description: 'Традиционное исполнение последнего произведения В.А. Моцарта',
-    image: 'https://example.com/mozart.jpg',
-    seats: generateSeats(120, 25)
+    image: 'https://artbene.ru/wp-content/uploads/FYFVV.jpg',
+    seats: generateSeats(100, 10)
   }
 ];
 

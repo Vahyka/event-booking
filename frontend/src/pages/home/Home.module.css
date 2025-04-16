@@ -20,37 +20,39 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: var(--background-paper);
+    background: var(--background-default);
     padding: 2rem;
     border-radius: 16px;
-    outline: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
     max-width: 800px;
     width: 90%;
     max-height: 90vh;
     overflow-y: auto;
+    z-index: 1300;
   }
   
   .modalHeader {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
   }
   
   .modalTitle {
     color: var(--primary-main);
     font-size: 2rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: -1rem;
+    margin-left: 0.8rem;
   }
   
   .modalDescription {
-    color: var(--secondary-main);
+    color: var(--primary-main);
     font-size: 1.1rem;
     line-height: 1.6;
+    margin-left: 1rem;
   }
   
   .seatPickerContainer {
-    margin-top: 2rem;
-    padding: 1rem;
     background: var(--background-default);
     border-radius: 12px;
+    margin-left: 1rem;
   }
   
   /* Адаптивность */

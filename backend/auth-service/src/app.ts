@@ -1,18 +1,10 @@
 import express from 'express';
-import http from 'http';
 import dotenv from 'dotenv';
-import path, { dirname } from 'path';
-import { fileURLToPath } from 'url';
 import cors from 'cors';
-import db from './config/db.ts';
-// import authRoutes from './routes/authRoutes.ts';
+import sequelize from './config/db';
 
 const app = express();
 dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-
-const __dirname = dirname(__filename);
 
 // Middleware 
 app.use(express.json());
@@ -24,6 +16,17 @@ app.use(cors({
 // Routes
 // app.use('/auth', authRoutes);
 
-app.listen(process.env.PORT, ()=> {
-    console.log(`Server is running on http://localhost:${process.env.PORT}/`);
-});
+async function initializeApp() {
+  try {
+      await sequelize.authenticate();
+      console.log('Connection has been established successfully.');
+  } catch (error) {
+      console.error('Unable to connect to the database:', error);
+  }
+
+  app.listen(process.env.PORT, () => {
+      console.log(`Server is running on http://localhost:${process.env.PORT}/`);
+  });
+}
+
+initializeApp();
