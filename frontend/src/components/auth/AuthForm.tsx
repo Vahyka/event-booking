@@ -9,11 +9,22 @@ export default function AuthForm({ type }: { type: AuthType }) {
       <h2>{type === 'login' ? 'Вход' : 'Регистрация'}</h2>
       <form className={styles.form}>
         {type === 'register' && (
-          <TextField label="Имя" fullWidth margin="normal" />
+          <>
+            <TextField 
+              label="Имя" 
+              fullWidth 
+              margin="normal" 
+            />
+            <TextField 
+              label="Email" 
+              type="email" 
+              fullWidth 
+              margin="normal" 
+            />
+          </>
         )}
         <TextField 
-          label="Email" 
-          type="email" 
+          label="Логин" 
           fullWidth 
           margin="normal" 
         />
