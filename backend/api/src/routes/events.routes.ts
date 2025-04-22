@@ -1,12 +1,8 @@
 import express, { Router, RequestHandler } from 'express';
 import { 
-    createEvent, 
     getEvents, 
     getEventById, 
-    updateEvent, 
-    deleteEvent 
 } from '../controllers/event.controller';
-import { authenticate, authorize } from '../../../auth-service/src/middleware/auth.middleware';
 
 const router: Router = express.Router();
 

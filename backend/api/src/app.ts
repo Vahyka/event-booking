@@ -39,7 +39,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 });
 
 // Start server
-const PORT = process.env.PORT || 5005;
+const PORT = process.env.PORT;
 
 app.listen(PORT, async () => {
     try {

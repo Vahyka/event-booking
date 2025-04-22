@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Seat from '../models/seat.model';
 import Event from '../models/event.model';
-import { Op } from '@sequelize/core';
+// import { Op } from '@sequelize/core';
 
 export const getEventSeats = async (req: Request, res: Response) => {
     try {

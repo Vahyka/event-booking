@@ -1,10 +1,13 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
+import { config } from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { Op } from '@sequelize/core';
 import User from '../models/user.model';
 import { validateRegisterInput, validateLoginInput } from '../middleware/validation.middleware';
 import { generateToken } from '../config/jwt.config';
+
+config();
 
 export const register = async (req: Request, res: Response) => {
     try {
@@ -100,3 +103,25 @@ export const login = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 }; 
+
+export const verifyToken = async (req: Request, res: Response) => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+        
+        if (!token) {
+          return res.status(401).json({ message: 'No token provided' });
+        }
+
+        const jwtSecret = process.env.JWT_SECRET || 'default-secret-key';
+        const decoded = jwt.verify(token, jwtSecret) as { id: number };
+        const user = await User.findByPk(decoded.id);
+    
+        if (!user) {
+          return res.status(401).json({ message: 'User not found' });
+        }
+    
+        return res.json({ user: { id: user.id, email: user.email } });
+      } catch (error) {
+        return res.status(401).json({ message: 'Invalid token' });
+      }
+};
