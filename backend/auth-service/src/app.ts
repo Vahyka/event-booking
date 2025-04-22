@@ -5,7 +5,6 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import sequelize from './config/db.config';
 import authRoute from './routes/auth.routes';
-// import { errorHandler } from './middleware/error.middleware';
 
 // Load environment variables
 dotenv.config();
@@ -18,10 +17,11 @@ app.use(helmet());
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Set-Cookie'],
 }));
 
 // Request logging
@@ -38,11 +38,19 @@ app.get('/health', (req: Request, res: Response) => {
 // API routes
 app.use('/auth', authRoute);
 
+// 404 handler
 app.use((req: Request, res: Response) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-// app.use(errorHandler);
+// Error handler
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack);
+  res.status(err.status || 500).json({
+    error: err.message || 'Internal Server Error',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
+});
 
 const PORT = process.env.PORT;
 

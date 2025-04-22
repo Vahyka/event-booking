@@ -5,6 +5,9 @@ import { Op } from '@sequelize/core';
 import User from '../models/user.model';
 import { validateRegisterInput, validateLoginInput } from '../middleware/validation.middleware';
 import { generateToken } from '../config/jwt.config';
+import cors from 'cors';
+
+const TOKEN_EXPIRATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
 export const register = async (req: Request, res: Response) => {
     try {
@@ -42,9 +45,28 @@ export const register = async (req: Request, res: Response) => {
         // Generate JWT token
         const token = generateToken({ id: user.id, role: user.role });
 
+        // Set cookie
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+            domain: 'localhost',
+            maxAge: TOKEN_EXPIRATION
+        });
+
+        // Set session cookie
+        res.cookie('session-cookie', user.id, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+            domain: 'localhost',
+            maxAge: TOKEN_EXPIRATION
+        });
+
         res.status(201).json({
             message: 'User registered successfully',
-            token,
             user: {
                 id: user.id,
                 username: user.username,
@@ -61,7 +83,7 @@ export const register = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
     try {
-        const { email, password } = req.body;
+        const { username, password } = req.body;
 
         // Validate input
         const validationError = validateLoginInput(req.body);
@@ -69,8 +91,8 @@ export const login = async (req: Request, res: Response) => {
             return res.status(400).json({ error: validationError });
         }
 
-        // Find user
-        const user = await User.findOne({ where: { email } });
+        // Find user by username
+        const user = await User.findOne({ where: { username } });
         if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
@@ -84,9 +106,28 @@ export const login = async (req: Request, res: Response) => {
         // Generate JWT token
         const token = generateToken({ id: user.id, role: user.role });
 
+        // Set cookie
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+            domain: 'localhost',
+            maxAge: TOKEN_EXPIRATION
+        });
+
+        // Set session cookie
+        res.cookie('session-cookie', user.id, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+            domain: 'localhost',
+            maxAge: TOKEN_EXPIRATION
+        });
+
         res.json({
             message: 'Login successful',
-            token,
             user: {
                 id: user.id,
                 username: user.username,
@@ -97,6 +138,32 @@ export const login = async (req: Request, res: Response) => {
         });
     } catch (error) {
         console.error('Login error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+export const logout = async (req: Request, res: Response) => {
+    try {
+        // Clear all cookies
+        res.clearCookie('token', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+            domain: 'localhost'
+        });
+        
+        res.clearCookie('session-cookie', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+            domain: 'localhost'
+        });
+
+        res.json({ message: 'Logout successful' });
+    } catch (error) {
+        console.error('Logout error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 }; 
