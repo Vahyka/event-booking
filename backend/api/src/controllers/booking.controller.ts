@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, response, Response } from 'express';
 import Booking from '../models/booking.model';
 import Seat from '../models/seat.model';
 import Event from '../models/event.model';
@@ -21,7 +21,8 @@ export const createBooking = async (req: Request, res: Response) => {
 
         // Check if event exists
         const event = await Event.findByPk(eventId);
-        if (!event) {
+        if (!event) 
+        {
             return res.status(404).json({ error: 'Event not found' });
         }
 

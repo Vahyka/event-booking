@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
+import { config } from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { Op } from '@sequelize/core';
 import User from '../models/user.model';
@@ -8,6 +9,8 @@ import { generateToken } from '../config/jwt.config';
 import cors from 'cors';
 
 const TOKEN_EXPIRATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+config();
 
 export const register = async (req: Request, res: Response) => {
     try {
@@ -140,30 +143,4 @@ export const login = async (req: Request, res: Response) => {
         console.error('Login error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-};
 
-export const logout = async (req: Request, res: Response) => {
-    try {
-        // Clear all cookies
-        res.clearCookie('token', {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            path: '/',
-            domain: 'localhost'
-        });
-        
-        res.clearCookie('session-cookie', {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            path: '/',
-            domain: 'localhost'
-        });
-
-        res.json({ message: 'Logout successful' });
-    } catch (error) {
-        console.error('Logout error:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-}; 
