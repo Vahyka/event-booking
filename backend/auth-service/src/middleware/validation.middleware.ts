@@ -8,7 +8,7 @@ interface RegisterInput {
 }
 
 interface LoginInput {
-    email: string;
+    username: string;
     password: string;
 }
 
@@ -39,14 +39,18 @@ export const validateRegisterInput = (input: RegisterInput): string | null => {
 };
 
 export const validateLoginInput = (input: LoginInput): string | null => {
-    const { email, password } = input;
+    const { username, password } = input;
 
-    if (!email || !password) {
-        return 'Email and password are required';
+    if (!username || !password) {
+        return 'Username and password are required';
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        return 'Invalid email format';
+    if (username.length < 3) {
+        return 'Username must be at least 3 characters long';
+    }
+
+    if (password.length < 6) {
+        return 'Password must be at least 6 characters long';
     }
 
     return null;

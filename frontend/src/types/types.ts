@@ -20,3 +20,14 @@ export interface Event {
     seats: string[];
     date: string;
   }
+
+export interface UserAttributes {
+  id: string;
+  username: string;
+  name: string;
+  email: string;
+  role: 'user' | 'admin';
+  password: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
