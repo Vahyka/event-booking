@@ -5,7 +5,7 @@ import { config } from 'dotenv';
 config();
 
 // Validate required environment variables
-const requiredEnvVars = ['API_DB_HOST', 'API_DB_PORT', 'API_DB_USER', 'API_DB_PASSWORD', 'API_DB_NAME'];
+const requiredEnvVars = ['DB_HOST', 'DB_PORT', 'DB_USER', 'DB_PASSWORD', 'DB_NAME'];
 for (const envVar of requiredEnvVars) {
   if (!process.env[envVar]) {
     throw new Error(`Missing required environment variable: ${envVar}`);
@@ -14,11 +14,11 @@ for (const envVar of requiredEnvVars) {
 
 const sequelize = new Sequelize({
   dialect: PostgresDialect,
-  host: process.env.API_DB_HOST,
-  port: Number(process.env.API_DB_PORT),
-  user: process.env.API_DB_USER,
-  password: process.env.API_DB_PASSWORD,
-  database: process.env.API_DB_NAME,
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   logging: process.env.NODE_ENV === 'development' ? console.log : false,
   pool: {
     max: 5,

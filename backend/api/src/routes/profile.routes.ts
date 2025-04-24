@@ -4,8 +4,7 @@ import {
     getBookingDetails,
     cancelBooking 
 } from '../controllers/booking.controller';
-// import { authenticate } from '../middleware/auth.middleware';
-import { authenticate } from '../../src/middleware/auth.middleware';
+import { authenticate } from '../middleware/auth.middleware';
 
 const router: Router = express.Router();
 

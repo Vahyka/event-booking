@@ -10,6 +10,7 @@ interface BookingAttributes {
     userId: string;
     status: 'confirmed' | 'cancelled' | 'pending';
     bookingDate: Date;
+    quantity: number;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -21,6 +22,7 @@ class Booking extends Model<BookingAttributes> implements BookingAttributes {
     declare userId: string;
     declare status: 'confirmed' | 'cancelled' | 'pending';
     declare bookingDate: Date;
+    declare quantity: number;
     declare createdAt?: Date;
     declare updatedAt?: Date;
 }
@@ -59,6 +61,11 @@ Booking.init(
         bookingDate: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW,
+        },
+        quantity: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 1,
         },
         createdAt: {
             type: DataTypes.DATE,
