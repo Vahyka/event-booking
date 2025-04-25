@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { API_URL } from '../config';
 
 // Глобальная настройка axios для работы с куками
@@ -14,6 +14,35 @@ const axiosInstance = axios.create({
   }
 });
 
+// Перехватчик для автоматического обновления токена
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError) => {
+    const originalRequest = error.config;
+
+    // Если ошибка 401 и это не запрос на обновление токена
+    if (error.response?.status === 401 && 
+        originalRequest && 
+        !originalRequest._retry && 
+        originalRequest.url !== '/auth/refresh-token') {
+      originalRequest._retry = true;
+
+      try {
+        // Пытаемся обновить токен
+        await axiosInstance.post('/auth/refresh-token');
+        // Повторяем оригинальный запрос
+        return axiosInstance(originalRequest);
+      } catch (refreshError) {
+        // Если не удалось обновить токен, перенаправляем на страницу входа
+        window.location.href = '/login';
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 export interface LoginData {
   username: string;
   password: string;
@@ -26,55 +55,66 @@ export interface RegisterData {
   name: string;
 }
 
+export interface User {
+  id: string;
+  email: string;
+  username: string;
+  name: string;
+  role: string;
+  permissions: string[];
+}
+
 export interface AuthResponse {
-  user: {
-    id: string;
-    email: string;
-    username: string;
-    name: string;
-    role: string;
-  };
+  user: User;
+  message: string;
 }
 
 class AuthService {
+  // Проверка наличия токенов
+  hasTokens(): boolean {
+    return document.cookie.includes('accessToken=') && document.cookie.includes('refreshToken=');
+  }
+
+  // Шаг 1: Аутентификация пользователя
   async login(data: LoginData): Promise<AuthResponse> {
-    const response = await axiosInstance.post('/auth/login', data);
-    console.log('Login response:', response);
-    console.log('Response headers:', response.headers);
-    console.log('Cookies:', document.cookie);
+    const response = await axiosInstance.post<AuthResponse>('/auth/login', data);
     return response.data;
   }
 
+  // Шаг 2: Регистрация нового пользователя
   async register(data: RegisterData): Promise<AuthResponse> {
-    const response = await axiosInstance.post('/auth/register', data);
+    const response = await axiosInstance.post<AuthResponse>('/auth/register', data);
     return response.data;
   }
 
-  async validateToken(): Promise<AuthResponse['user'] | null> {
+  // Шаг 3: Проверка валидности токена
+  async validateToken(): Promise<User | null> {
     try {
-      const response = await axiosInstance.get('/auth/validate');
-      if (response.data?.user?.id) {
-        return response.data.user;
-      }
-      return null;
+      const response = await axiosInstance.post<AuthResponse>('/auth/verify-token');
+      return response.data.user;
     } catch (error) {
       return null;
     }
   }
 
+  // Шаг 4: Обновление токена
+  async refreshToken(): Promise<void> {
+    await axiosInstance.post('/auth/refresh-token');
+  }
+
+  // Выход из системы
   async logout(): Promise<void> {
     try {
       await axiosInstance.post('/auth/logout');
-      // Принудительно очищаем куки на клиенте
-      document.cookie = 'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Domain=localhost';
-      document.cookie = 'session-cookie=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Domain=localhost';
     } catch (error) {
       console.error('Logout error:', error);
-      // Даже в случае ошибки, пытаемся очистить куки
-      document.cookie = 'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Domain=localhost';
-      document.cookie = 'session-cookie=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Domain=localhost';
       throw error;
     }
+  }
+
+  // Проверка наличия определенного разрешения
+  hasPermission(user: User | null, permission: string): boolean {
+    return user?.permissions?.includes(permission) || false;
   }
 }
 

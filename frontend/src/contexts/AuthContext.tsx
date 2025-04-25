@@ -23,28 +23,62 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // Check if user is logged in on mount
-    const validateAuth = async () => {
-      try {
-        const userData = await authService.validateToken();
-        if (userData?.id) {
-          setUser(userData);
-          setIsAuthenticated(true);
-        } else {
-          setUser(null);
-          setIsAuthenticated(false);
+  const validateAuth = async () => {
+    try {
+      // Проверяем наличие токенов в куках
+      if (authService.hasTokens()) {
+        try {
+          const userData = await authService.validateToken();
+          if (userData?.id) {
+            setUser(userData);
+            setIsAuthenticated(true);
+            return;
+          }
+        } catch (error) {
+          console.log('Token validation failed, trying to refresh...');
         }
-      } catch (error) {
-        console.error('Token validation failed:', error);
-        setUser(null);
-        setIsAuthenticated(false);
-      } finally {
-        setIsLoading(false);
+
+        // Если валидация не удалась, пробуем обновить токен
+        try {
+          await authService.refreshToken();
+          const refreshedUserData = await authService.validateToken();
+          if (refreshedUserData?.id) {
+            setUser(refreshedUserData);
+            setIsAuthenticated(true);
+            return;
+          }
+        } catch (refreshError) {
+          console.error('Token refresh failed:', refreshError);
+        }
+      }
+      
+      // Если мы дошли до этой точки, значит авторизация не удалась
+      setUser(null);
+      setIsAuthenticated(false);
+    } catch (error) {
+      console.error('Auth validation error:', error);
+      setUser(null);
+      setIsAuthenticated(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    validateAuth();
+
+    // Добавляем обработчик для проверки авторизации при возвращении на страницу
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        validateAuth();
       }
     };
 
-    validateAuth();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   const login = (userData: User) => {
@@ -61,8 +95,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Показываем загрузку до тех пор, пока не проверим авторизацию
   if (isLoading) {
-    return null; // или компонент загрузки
+    return <div>Loading...</div>;
   }
 
   return (

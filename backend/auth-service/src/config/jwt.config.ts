@@ -3,15 +3,16 @@ import { config } from 'dotenv';
 
 config();
 
-if (!process.env.JWT_SECRET) {
-    throw new Error('JWT_SECRET environment variable is not set');
-}
+const JWT_SECRET = process.env.JWT_SECRET || 'default-secret-key';
+const ACCESS_TOKEN_EXPIRES_IN = '15m'; // 15 minutes
+const REFRESH_TOKEN_EXPIRES_IN = '7d'; // 7 days
 
-export const JWT_SECRET = process.env.JWT_SECRET;
-export const JWT_EXPIRES_IN = '24h';
+export const generateAccessToken = (payload: object): string => {
+    return jwt.sign(payload, JWT_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRES_IN });
+};
 
-export const generateToken = (payload: object): string => {
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+export const generateRefreshToken = (payload: object): string => {
+    return jwt.sign(payload, JWT_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRES_IN });
 };
 
 export const verifyToken = (token: string): any => {

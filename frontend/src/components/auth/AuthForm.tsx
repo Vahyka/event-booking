@@ -38,8 +38,9 @@ export default function AuthForm({ type }: { type: AuthType }) {
         login(response.user);
         navigate('/');
       } else {
-        //const response = await authService.register(formData as RegisterData);
-        navigate('/login');
+        const response = await authService.register(formData as RegisterData);
+        login(response.user);
+        navigate('/');
       }
     } catch (err: any) {
       console.error('Auth error:', err);
