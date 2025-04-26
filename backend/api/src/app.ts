@@ -6,8 +6,9 @@ import eventRouter from './routes/events.routes'
 import morgan from 'morgan';
 import helmet from 'helmet';
 import profileRoutes from './routes/profile.routes';
-import { testConnection } from './config/db.config';
-
+import { testConnection} from './config/db.config';
+import bookingRouter from './routes/booking.routes';
+import sequelize from './config/db.config';
 
 const app = express();
 dotenv.config();
@@ -25,6 +26,7 @@ app.use(helmet());
 
 app.use('/api/events', eventRouter);
 app.use('/api/profile', profileRoutes);
+app.use('/api/bookings', bookingRouter);
 // app.use('/api/orders', bookingRouter);
 
 // Health check
@@ -44,6 +46,9 @@ const PORT = process.env.PORT;
 app.listen(PORT, async () => {
     try {
         await testConnection();
+        // Sync all models with database
+        await sequelize.sync({ alter: true });
+        console.log('Database tables synchronized');
         console.log(`Server is running on port ${PORT}`);
     } catch (error) {
         console.error('Failed to start server:', error);

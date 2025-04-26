@@ -8,16 +8,12 @@ import { authenticate } from '../middleware/auth.middleware';
 
 const router: Router = express.Router();
 
-// All routes require authentication
 router.use(authenticate as unknown as RequestHandler);
 
-// Get user's bookings
 router.get('/bookings', getUserBookings as unknown as RequestHandler);
 
-// Get specific booking details
 router.get('/bookings/:id', getBookingDetails as unknown as RequestHandler);
 
-// Cancel a booking
 router.put('/bookings/:id/cancel', cancelBooking as unknown as RequestHandler);
 
 export default router; 

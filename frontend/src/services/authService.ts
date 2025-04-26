@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { API_URL } from '../config';
 
 // Глобальная настройка axios для работы с куками
@@ -17,14 +17,11 @@ const axiosInstance = axios.create({
 // Перехватчик для автоматического обновления токена
 axiosInstance.interceptors.response.use(
   (response) => response,
-  async (error: AxiosError) => {
+  async (error) => {
     const originalRequest = error.config;
 
     // Если ошибка 401 и это не запрос на обновление токена
-    if (error.response?.status === 401 && 
-        originalRequest && 
-        !originalRequest._retry && 
-        originalRequest.url !== '/auth/refresh-token') {
+    if (error.response?.status === 401 && !originalRequest._retry && originalRequest.url !== '/auth/refresh-token') {
       originalRequest._retry = true;
 
       try {
@@ -55,54 +52,51 @@ export interface RegisterData {
   name: string;
 }
 
-export interface User {
-  id: string;
-  email: string;
-  username: string;
-  name: string;
-  role: string;
-  permissions: string[];
+export interface AuthResponse {
+  user: {
+    id: string;
+    email: string;
+    username: string;
+    name: string;
+    role: string;
+  };
 }
 
-export interface AuthResponse {
-  user: User;
-  message: string;
+interface VerifyTokenResponse {
+  user: AuthResponse['user'];
 }
 
 class AuthService {
-  // Проверка наличия токенов
   hasTokens(): boolean {
     return document.cookie.includes('accessToken=') && document.cookie.includes('refreshToken=');
   }
 
-  // Шаг 1: Аутентификация пользователя
+  async refreshToken(): Promise<void> {
+    await axiosInstance.post('/auth/refresh-token');
+  }
+
   async login(data: LoginData): Promise<AuthResponse> {
-    const response = await axiosInstance.post<AuthResponse>('/auth/login', data);
-    return response.data;
+    const response = await axiosInstance.post('/auth/login', data);
+    return response.data as AuthResponse;
   }
 
-  // Шаг 2: Регистрация нового пользователя
   async register(data: RegisterData): Promise<AuthResponse> {
-    const response = await axiosInstance.post<AuthResponse>('/auth/register', data);
-    return response.data;
+    const response = await axiosInstance.post('/auth/register', data);
+    return response.data as AuthResponse;
   }
 
-  // Шаг 3: Проверка валидности токена
-  async validateToken(): Promise<User | null> {
+  async validateToken(): Promise<AuthResponse['user'] | null> {
     try {
-      const response = await axiosInstance.post<AuthResponse>('/auth/verify-token');
-      return response.data.user;
+      const response = await axiosInstance.post<VerifyTokenResponse>('/auth/verify-token');
+      if (response.data?.user?.id) {
+        return response.data.user;
+      }
+      return null;
     } catch (error) {
       return null;
     }
   }
 
-  // Шаг 4: Обновление токена
-  async refreshToken(): Promise<void> {
-    await axiosInstance.post('/auth/refresh-token');
-  }
-
-  // Выход из системы
   async logout(): Promise<void> {
     try {
       await axiosInstance.post('/auth/logout');
@@ -110,11 +104,6 @@ class AuthService {
       console.error('Logout error:', error);
       throw error;
     }
-  }
-
-  // Проверка наличия определенного разрешения
-  hasPermission(user: User | null, permission: string): boolean {
-    return user?.permissions?.includes(permission) || false;
   }
 }
 

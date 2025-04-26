@@ -23,8 +23,8 @@ class Seat extends Model<SeatAttributes> implements SeatAttributes {
 Seat.init(
     {
         id: {
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4,
+            type: DataTypes.STRING,
+            defaultValue: DataTypes.STRING,
             primaryKey: true,
         },
         eventId: {
@@ -63,4 +63,4 @@ Seat.init(
 Seat.belongsTo(Event, { foreignKey: 'eventId' });
 Event.hasMany(Seat, { foreignKey: 'eventId' });
 
-export default Seat; 
+export default Seat;

@@ -1,5 +1,4 @@
 import { DataTypes, Model } from '@sequelize/core';
-// import { PostgresDialect } from '@sequelize/postgres';
 import sequelize from '../config/db.config';
 
 interface UserAttributes 

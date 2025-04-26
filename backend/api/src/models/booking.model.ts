@@ -5,83 +5,44 @@ import Seat from './seat.model';
 
 interface BookingAttributes {
     id: string;
+    userId: string;
     eventId: string;
     seatId: string;
-    userId: string;
-    status: 'confirmed' | 'cancelled' | 'pending';
-    bookingDate: Date;
-    quantity: number;
-    createdAt?: Date;
-    updatedAt?: Date;
 }
 
 class Booking extends Model<BookingAttributes> implements BookingAttributes {
     declare id: string;
-    declare eventId: string;
-    declare seatId: string;
-    declare userId: string;
-    declare status: 'confirmed' | 'cancelled' | 'pending';
-    declare bookingDate: Date;
-    declare quantity: number;
-    declare createdAt?: Date;
-    declare updatedAt?: Date;
+    userId!: string;
+    eventId!: string;
+    seatId!: string;
 }
 
-Booking.init(
-    {
+Booking.init({
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        eventId: {
-            type: DataTypes.UUID,
-            allowNull: false,
-            references: {
-                model: Event,
-                key: 'id',
-            },
-        },
-        seatId: {
-            type: DataTypes.UUID,
-            allowNull: false,
-            references: {
-                model: Seat,
-                key: 'id',
-            },
-        },
         userId: {
             type: DataTypes.UUID,
             allowNull: false,
         },
-        status: {
-            type: DataTypes.ENUM('confirmed', 'cancelled', 'pending'),
-            defaultValue: 'pending',
-        },
-        bookingDate: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-        },
-        quantity: {
-            type: DataTypes.INTEGER,
+        eventId: {
+            type: DataTypes.UUID,
             allowNull: false,
-            defaultValue: 1,
         },
-        createdAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-        },
-        updatedAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
+        seatId: {
+            type: DataTypes.STRING,
+            allowNull: false,
         },
     },
     {
         sequelize,
         modelName: 'Booking',
         tableName: 'bookings',
+        timestamps: true,
     }
-);
+)
 
 // Define associations
 Booking.belongsTo(Event, { foreignKey: 'eventId' });

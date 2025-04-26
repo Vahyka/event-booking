@@ -1,57 +1,77 @@
-import { Request, response, Response } from 'express';
+import { Request, Response } from 'express';
 import Booking from '../models/booking.model';
 import Seat from '../models/seat.model';
 import Event from '../models/event.model';
-import { Op } from '@sequelize/core';
+import { v4 as uuidv4 } from 'uuid';
 
 export const createBooking = async (req: Request, res: Response) => {
     try {
-        const { eventId, seatId } = req.body;
-        const userId = req.user?.id; // Assuming user ID is available from auth middleware
+        const { eventId, seatId, userId } = req.body;
 
-        if (!userId) {
-            return res.status(401).json({ error: 'Unauthorized' });
+        // Валидация UUID
+        const isValidUUID = (str: string) => {
+            const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+            return uuidRegex.test(str);
+        };
+
+        // Проверяем, что все ID являются валидными UUID
+        if (!isValidUUID(eventId) || !isValidUUID(userId)) {
+            return res.status(400).json({ 
+                message: 'Invalid ID format. All IDs must be valid UUIDs' 
+            });
         }
 
-        // Check if seat is available
-        const seat = await Seat.findByPk(seatId);
-        if (!seat || seat.status !== 'available') {
-            return res.status(400).json({ error: 'Seat is not available' });
-        }
-
-        // Check if event exists
+        // Проверяем существование события
         const event = await Event.findByPk(eventId);
-        if (!event) 
-        {
-            return res.status(404).json({ error: 'Event not found' });
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
         }
 
-        // Create booking
-        const booking = await Booking.create({
-            eventId,
-            seatId,
-            userId,
-            status: 'confirmed'
-        } as any);
+        // Проверяем существование места
+        const seat = await Seat.findOne({
+            where: {
+                seatNumber: seatId,
+                eventId: eventId
+            }
+        });
+        
+        if (!seat) {
+            return res.status(404).json({ message: 'Seat not found or does not belong to this event' });
+        }
 
-        // Update seat status
+        // Проверяем, не забронировано ли уже место
+        const existingBooking = await Booking.findOne({
+            where: {
+                eventId,
+                seatId: seat.id,
+            }
+        });
+
+        if (existingBooking) {
+            return res.status(400).json({ message: 'This seat is already booked' });
+        }
+
+        // Создаем бронь
+        const booking = await Booking.create({
+            id: uuidv4(),
+            userId,
+            eventId,
+            seatId: seat.id,
+        });
+
+        // Обновляем статус места
         await seat.update({ status: 'booked' });
 
         res.status(201).json(booking);
     } catch (error) {
         console.error('Error creating booking:', error);
-        res.status(500).json({ error: 'Failed to create booking' });
+        res.status(500).json({ message: 'Error creating booking' });
     }
 };
 
 export const getUserBookings = async (req: Request, res: Response) => {
     try {
-        const userId = req.user?.id;
-
-        if (!userId) {
-            return res.status(401).json({ error: 'Unauthorized' });
-        }
-
+        const { userId } = req.params;
         const bookings = await Booking.findAll({
             where: { userId },
             include: [
@@ -61,49 +81,33 @@ export const getUserBookings = async (req: Request, res: Response) => {
                 },
                 {
                     model: Seat,
-                    attributes: ['seatNumber']
+                    attributes: ['seatNumber', 'status']
                 }
-            ],
-            order: [['bookingDate', 'DESC']]
+            ]
         });
-
         res.json(bookings);
     } catch (error) {
         console.error('Error fetching user bookings:', error);
-        res.status(500).json({ error: 'Failed to fetch bookings' });
+        res.status(500).json({ message: 'Error fetching bookings' });
     }
 };
 
 export const cancelBooking = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
-        const userId = req.user?.id;
-
-        if (!userId) {
-            return res.status(401).json({ error: 'Unauthorized' });
-        }
-
-        const booking = await Booking.findOne({
-            where: { id, userId }
-        });
+        const { bookingId } = req.params;
+        const booking = await Booking.findByPk(bookingId);
 
         if (!booking) {
-            return res.status(404).json({ error: 'Booking not found' });
+            return res.status(404).json({ message: 'Booking not found' });
         }
 
-        // Update booking status
-        await booking.update({ status: 'cancelled' });
-
-        // Update seat status
-        const seat = await Seat.findByPk(booking.seatId);
-        if (seat) {
-            await seat.update({ status: 'available' });
-        }
+        // booking.status = 'cancelled';
+        await booking.save();
 
         res.json(booking);
     } catch (error) {
         console.error('Error cancelling booking:', error);
-        res.status(500).json({ error: 'Failed to cancel booking' });
+        res.status(500).json({ message: 'Error cancelling booking' });
     }
 };
 
