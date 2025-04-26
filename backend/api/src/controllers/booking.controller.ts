@@ -102,6 +102,7 @@ export const cancelBooking = async (req: Request, res: Response) => {
         }
 
         // booking.status = 'cancelled';
+        await booking.destroy();
         await booking.save();
 
         res.json(booking);
