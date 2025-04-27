@@ -5,10 +5,11 @@ import cors from 'cors';
 import eventRouter from './routes/events.routes'
 import morgan from 'morgan';
 import helmet from 'helmet';
-import profileRoutes from './routes/profile.routes';
 import { testConnection} from './config/db.config';
 import bookingRouter from './routes/booking.routes';
 import sequelize from './config/db.config';
+import swaggerUi from 'swagger-ui-express';
+import swaggerFile from './config/swagger_output.json';
 
 const app = express();
 dotenv.config();
@@ -25,7 +26,6 @@ app.use(morgan('dev'));
 app.use(helmet());
 
 app.use('/api/events', eventRouter);
-app.use('/api/profile', profileRoutes);
 app.use('/api/bookings', bookingRouter);
 // app.use('/api/orders', bookingRouter);
 
@@ -42,6 +42,8 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 // Start server
 const PORT = process.env.PORT;
+
+app.use('/api/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.listen(PORT, async () => {
     try {

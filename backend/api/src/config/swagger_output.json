@@ -1,0 +1,147 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "My API",
+    "description": "Description",
+    "version": "1.0.0"
+  },
+  "host": "localhost:5005",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/api/bookings/create": {
+      "post": {
+        "description": "Create a new booking",
+        "parameters": [
+          {
+            "name": "booking",
+            "in": "body",
+            "description": "Booking object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Booking"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Booking created",
+            "schema": { "$ref": "#/definitions/Booking" }
+          },
+          "400": { "description": "Invalid input" }
+        }
+      }
+    },
+    "/api/bookings/user/{id}": {
+      "get": {
+        "description": "Get booking by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Booking object",
+            "schema": { "$ref": "#/definitions/Booking" }
+          },
+          "404": { "description": "Booking not found" }
+        }
+      }
+    },
+    "/api/bookings/{id}/cancel": {
+      "put": {
+        "description": "Cancel booking by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Booking cancelled" },
+          "404": { "description": "Booking not found" }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "description": "Get all events",
+        "responses": {
+          "200": {
+            "description": "List of events",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/Event" }
+            }
+          }
+        }
+      }
+    },
+    "/{id}": {
+      "get": {
+        "description": "Get event by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event object",
+            "schema": { "$ref": "#/definitions/Event" }
+          },
+          "404": { "description": "Event not found" }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Booking": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "userId": { "type": "string", "format": "uuid" },
+        "eventId": { "type": "string", "format": "uuid" },
+        "seatId": { "type": "string" }
+      },
+      "required": ["userId", "eventId", "seatId"]
+    },
+    "Event": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "location": { "type": "string" },
+        "image": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "description", "date", "location", "image"]
+    },
+    "Seat": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "eventId": { "type": "string", "format": "uuid" },
+        "seatNumber": { "type": "string" },
+        "status": { "type": "string", "enum": ["available", "booked", "reserved"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["eventId", "seatNumber", "status"]
+    }
+  }
+}

@@ -5,6 +5,8 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import sequelize from './config/db.config';
 import authRoute from './routes/auth.routes';
+import swaggerUi from 'swagger-ui-express';
+import swaggerFile from './config/swagger_output.json';
 
 // Load environment variables
 dotenv.config();
@@ -29,6 +31,8 @@ app.use(morgan('dev'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use('/auth/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {
