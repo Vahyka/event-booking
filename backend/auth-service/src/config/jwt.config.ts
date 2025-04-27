@@ -4,8 +4,8 @@ import { config } from 'dotenv';
 config();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'default-secret-key';
-const ACCESS_TOKEN_EXPIRES_IN = '15m'; // 15 minutes
-const REFRESH_TOKEN_EXPIRES_IN = '7d'; // 7 days
+const ACCESS_TOKEN_EXPIRES_IN = '15m'; 
+const REFRESH_TOKEN_EXPIRES_IN = '7d'; 
 
 export const generateAccessToken = (payload: object): string => {
     return jwt.sign(payload, JWT_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRES_IN });

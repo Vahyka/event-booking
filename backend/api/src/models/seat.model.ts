@@ -24,7 +24,6 @@ Seat.init(
     {
         id: {
             type: DataTypes.STRING,
-            defaultValue: DataTypes.STRING,
             primaryKey: true,
         },
         eventId: {
