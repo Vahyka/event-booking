@@ -1,37 +1,40 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from '../src/pages/home/Home';
-import Profile from '../src/pages/profile/profile';
-import Login from '../src/pages/auth/login';
-import Register from '../src/pages/auth/register';
-import Header from '../src/components/layout/Header';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React from 'react';
+import Home from './pages/home/Home';
+import Profile from './pages/profile/profile';
+import Header from './components/layout/Header';
 import { ThemeProvider, GlobalStyles } from '@mui/material';
 import theme from "./styles/theme"
 import './styles/global.css'
+import { AuthProvider } from './contexts/AuthContext';
+import AuthForm from './components/auth/AuthForm';
 
 export default function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyles
-        styles={(theme) => ({
-          ':root': {
-            '--primary-main': theme.palette.primary.main,
-            '--primary-contrastText': theme.palette.primary.contrastText,
-            '--secondary-main': theme.palette.secondary.main,
-            '--secondary-light': theme.palette.secondary.light,
-            '--background-default': theme.palette.background.default,
-            '--background-paper': theme.palette.background.paper,
-          }
-        })}
-      />
-      <BrowserRouter>
-        <Header />
+    <AuthProvider>
+      <ThemeProvider theme={theme}>
+        <GlobalStyles
+          styles={(theme) => ({
+            ':root': {
+              '--primary-main': theme.palette.primary.main,
+              '--primary-contrastText': theme.palette.primary.contrastText,
+              '--secondary-main': theme.palette.secondary.main,
+              '--secondary-light': theme.palette.secondary.light,
+              '--background-default': theme.palette.background.default,
+              '--background-paper': theme.palette.background.paper,
+            }
+          })}
+        />
+        <Router>
+          <Header />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<AuthForm type="login" />} />
+            <Route path="/register" element={<AuthForm type="register" />} />
           </Routes>
-      </BrowserRouter>
-    </ThemeProvider>
+        </Router>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }

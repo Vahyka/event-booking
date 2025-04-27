@@ -7,3 +7,25 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     color: var(--primary-main)
   }
+
+.container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.button {
+  margin-top: 20px !important;
+}
+
+.error {
+  color: #d32f2f;
+  margin-top: 10px;
+  text-align: center;
+}

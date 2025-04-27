@@ -12,6 +12,8 @@ services:
       - /app/backend/node_modules
     depends_on:
       - db
+    networks:
+      - app-network
 
   auth-service:
     build:

@@ -1,7 +1,24 @@
 .header {
-    margin-bottom: 2rem;
-  }
-  
-  .spacer {
-    flex-grow: 1;
-  }
+  background-color: var(--primary-main);
+  color: var(--primary-contrastText);
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+.leftSection {
+  display: flex;
+  gap: 16px;
+}
+
+.rightSection {
+  display: flex;
+  gap: 16px;
+}
+
+.spacer {
+  flex-grow: 1;
+}

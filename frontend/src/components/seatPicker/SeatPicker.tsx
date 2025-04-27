@@ -17,7 +17,7 @@ export default function SeatPicker({
           onClick={() => onSelect(seat.id)}
           disabled={seat.status === 'booked'}
         >
-          {seat.row}-{seat.number}
+          {seat.seatNumber}
         </button>
       ))}
     </div>
