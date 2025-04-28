@@ -89,7 +89,7 @@ export const verifyToken = async (req: Request, res: Response) => {
         const accessToken = req.cookies.accessToken;
         
         if (!accessToken) {
-            res.status(401).json({ error: 'No access token provided' });
+            return res.status(401).json({ error: 'No access token provided' });
         }
 
         try {
@@ -97,16 +97,16 @@ export const verifyToken = async (req: Request, res: Response) => {
             const user = await User.findByPk(decoded.id);
 
             if (!user) {
-                res.status(401).json({ error: 'User not found' });
+                return res.status(401).json({ error: 'User not found' });
             }
 
             res.json({
                 user: {
-                    id: user?.id,
-                    username: user?.username,
-                    email: user?.email,
-                    name: user?.name,
-                    role: user?.role
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                    name: user.name,
+                    role: user.role
                 }
             });
         } catch (tokenError) {
@@ -114,38 +114,43 @@ export const verifyToken = async (req: Request, res: Response) => {
             const refreshToken = req.cookies.refreshToken;
             
             if (!refreshToken) {
-                res.status(401).json({ error: 'No refresh token provided' });
+                return res.status(401).json({ error: 'No refresh token provided' });
             }
 
-            const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET || 'default-secret-key') as { id: string, role: string };
-            const user = await User.findByPk(decoded.id);
+            try {
+                const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET || 'default-secret-key') as { id: string, role: string };
+                const user = await User.findByPk(decoded.id);
 
-            if (!user) {
-                res.status(401).json({ error: 'User not found' });
-            }
-
-            // Генерируем новый access token
-            const newAccessToken = generateAccessToken({ id: user?.id, role: user?.role });
-
-            // Устанавливаем новый access token в куки
-            res.cookie('accessToken', newAccessToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax',
-                path: '/',
-                domain: 'localhost',
-                maxAge: ACCESS_TOKEN_EXPIRATION
-            });
-
-            res.json({
-                user: {
-                    id: user?.id,
-                    username: user?.username,
-                    email: user?.email,
-                    name: user?.name,
-                    role: user?.role
+                if (!user) {
+                    return res.status(401).json({ error: 'User not found' });
                 }
-            });
+
+                // Генерируем новый access token
+                const newAccessToken = generateAccessToken({ id: user.id, role: user.role });
+
+                // Устанавливаем новый access token в куки
+                res.cookie('accessToken', newAccessToken, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'lax',
+                    path: '/',
+                    domain: 'localhost',
+                    maxAge: ACCESS_TOKEN_EXPIRATION
+                });
+
+                res.json({
+                    user: {
+                        id: user.id,
+                        username: user.username,
+                        email: user.email,
+                        name: user.name,
+                        role: user.role
+                    }
+                });
+            } catch (refreshError) {
+                console.error('Refresh token verification failed:', refreshError);
+                return res.status(401).json({ error: 'Invalid refresh token' });
+            }
         }
     } catch (error) {
         console.error('Token verification error:', error);

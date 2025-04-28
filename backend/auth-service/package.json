@@ -17,6 +17,7 @@
     "@eslint/js": "^9.24.0",
     "@stylistic/eslint-plugin": "^4.2.0",
     "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
     "@types/eslint__js": "^8.42.3",
     "@types/express": "^5.0.1",
@@ -37,6 +38,7 @@
   "dependencies": {
     "@sequelize/postgres": "^7.0.0-alpha.46",
     "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",

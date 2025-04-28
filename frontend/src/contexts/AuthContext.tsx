@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '../services/authService';
+import { useStore } from './StoreContext';
 
 interface User {
   id: string;
@@ -19,46 +20,56 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { userStore } = useStore();
+  // Восстанавливаем состояние из localStorage при инициализации
+  const [user, setUser] = useState<User | null>(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return !!localStorage.getItem('user');
+  });
   const [isLoading, setIsLoading] = useState(true);
+
+  // Синхронизация MobX userStore с AuthContext
+  useEffect(() => {
+    if (user) {
+      userStore.setUser({ ...user, password: '', role: user.role as 'user' | 'admin' });
+    } else {
+      userStore.setUser(null);
+    }
+  }, [user, userStore]);
 
   const validateAuth = async () => {
     try {
-      // Проверяем наличие токенов в куках
-      if (authService.hasTokens()) {
-        try {
-          const userData = await authService.validateToken();
-          if (userData?.id) {
-            setUser(userData);
-            setIsAuthenticated(true);
-            return;
-          }
-        } catch (error) {
-          console.log('Token validation failed, trying to refresh...');
-        }
-
-        // Если валидация не удалась, пробуем обновить токен
-        try {
-          await authService.refreshToken();
-          const refreshedUserData = await authService.validateToken();
-          if (refreshedUserData?.id) {
-            setUser(refreshedUserData);
-            setIsAuthenticated(true);
-            return;
-          }
-        } catch (refreshError) {
-          console.error('Token refresh failed:', refreshError);
-        }
+      // ВСЕГДА пробуем валидировать токен
+      const userData = await authService.validateToken();
+      if (userData?.id) {
+        setUser(userData);
+        setIsAuthenticated(true);
+        localStorage.setItem('user', JSON.stringify(userData));
+        return;
       }
-      
-      // Если мы дошли до этой точки, значит авторизация не удалась
+      // Если не удалось, пробуем refresh
+      try {
+        await authService.refreshToken();
+        const refreshedUserData = await authService.validateToken();
+        if (refreshedUserData?.id) {
+          setUser(refreshedUserData);
+          setIsAuthenticated(true);
+          localStorage.setItem('user', JSON.stringify(refreshedUserData));
+          return;
+        }
+      } catch (refreshError) {
+        console.error('Token refresh failed:', refreshError);
+      }
       setUser(null);
       setIsAuthenticated(false);
+      localStorage.removeItem('user');
     } catch (error) {
-      console.error('Auth validation error:', error);
       setUser(null);
       setIsAuthenticated(false);
+      localStorage.removeItem('user');
     } finally {
       setIsLoading(false);
     }
@@ -84,6 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = (userData: User) => {
     setUser(userData);
     setIsAuthenticated(true);
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const logout = async () => {
@@ -92,6 +104,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       setUser(null);
       setIsAuthenticated(false);
+      localStorage.removeItem('user');
     }
   };
 
