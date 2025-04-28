@@ -72,7 +72,7 @@ const EventSelection: React.FC<EventSelectionProps> = ({ onEventSelect }) => {
                 <CardMedia
                   component="img"
                   height="140"
-                  image={event.image}
+                  image={event.image.replace(/^@/, '')}
                   alt={event.title}
                 />
                 <CardContent>

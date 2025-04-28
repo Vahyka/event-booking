@@ -1,4 +1,4 @@
-import { makeAutoObservable, observable } from 'mobx';
+import { makeAutoObservable, observable, runInAction } from 'mobx';
 import { RootStore } from './RootStore';
 import { Event, Booking } from '../types/types';
 
@@ -52,18 +52,28 @@ export class EventStore {
     try {
       const cachedEvents = this.getCachedData('events');
       if (cachedEvents) {
-        this.events = cachedEvents;
+        runInAction(() => {
+          this.events = cachedEvents;
+        });
         return;
       }
 
-      this.setLoading(true);
+      runInAction(() => {
+        this.setLoading(true);
+      });
       const response = await fetch(`${API_URL}/api/events`);
       const data = await response.json();
-      this.setEvents(data);
+      runInAction(() => {
+        this.setEvents(data);
+      });
     } catch (error) {
-      this.setError(error instanceof Error ? error.message : 'Failed to fetch events');
+      runInAction(() => {
+        this.setError(error instanceof Error ? error.message : 'Failed to fetch events');
+      });
     } finally {
-      this.setLoading(false);
+      runInAction(() => {
+        this.setLoading(false);
+      });
     }
   };
 
@@ -72,25 +82,37 @@ export class EventStore {
       const cacheKey = `bookings-${userId}`;
       const cachedBookings = this.getCachedData(cacheKey);
       if (cachedBookings) {
-        this.bookings.set(userId, cachedBookings);
+        runInAction(() => {
+          this.bookings.set(userId, cachedBookings);
+        });
         return;
       }
 
-      this.setLoading(true);
+      runInAction(() => {
+        this.setLoading(true);
+      });
       const response = await fetch(`${API_URL}/api/bookings/user/${userId}`);
       const data = await response.json();
-      this.setBookings(userId, data);
-      this.setCachedData(cacheKey, data);
+      runInAction(() => {
+        this.setBookings(userId, data);
+        this.setCachedData(cacheKey, data);
+      });
     } catch (error) {
-      this.setError(error instanceof Error ? error.message : 'Failed to fetch bookings');
+      runInAction(() => {
+        this.setError(error instanceof Error ? error.message : 'Failed to fetch bookings');
+      });
     } finally {
-      this.setLoading(false);
+      runInAction(() => {
+        this.setLoading(false);
+      });
     }
   };
 
   createBooking = async (eventId: string, seatId: string, userId: string) => {
     try {
-      this.setLoading(true);
+      runInAction(() => {
+        this.setLoading(true);
+      });
       const response = await fetch(`${API_URL}/api/bookings`, {
         method: 'POST',
         headers: {
@@ -100,13 +122,19 @@ export class EventStore {
         body: JSON.stringify({ eventId, seatId }),
       });
       const newBooking = await response.json();
-      const userBookings = this.bookings.get(userId) || [];
-      this.bookings.set(userId, [...userBookings, newBooking]);
-      this.cache.delete(`bookings-${userId}`); // Invalidate cache
+      runInAction(() => {
+        const userBookings = this.bookings.get(userId) || [];
+        this.bookings.set(userId, [...userBookings, newBooking]);
+        this.cache.delete(`bookings-${userId}`); // Invalidate cache
+      });
     } catch (error) {
-      this.setError(error instanceof Error ? error.message : 'Failed to create booking');
+      runInAction(() => {
+        this.setError(error instanceof Error ? error.message : 'Failed to create booking');
+      });
     } finally {
-      this.setLoading(false);
+      runInAction(() => {
+        this.setLoading(false);
+      });
     }
   };
 
@@ -120,13 +148,19 @@ export class EventStore {
 
   cancelBooking = async (bookingId: string, userId: string) => {
     try {
-      this.setLoading(true);
+      runInAction(() => {
+        this.setLoading(true);
+      });
       await fetch(`${API_URL}/api/bookings/${bookingId}/cancel`, { method: 'PUT' });
       await this.fetchUserBookings(userId);
     } catch (error) {
-      this.setError(error instanceof Error ? error.message : 'Failed to cancel booking');
+      runInAction(() => {
+        this.setError(error instanceof Error ? error.message : 'Failed to cancel booking');
+      });
     } finally {
-      this.setLoading(false);
+      runInAction(() => {
+        this.setLoading(false);
+      });
     }
   };
 } 
