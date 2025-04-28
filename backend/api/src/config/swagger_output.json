@@ -71,7 +71,7 @@
         }
       }
     },
-    "/": {
+    "/api/events": {
       "get": {
         "description": "Get all events",
         "responses": {

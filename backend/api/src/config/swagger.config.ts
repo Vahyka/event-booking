@@ -9,6 +9,6 @@ const doc = {
     host: 'localhost:5005'
   };
 
-const routes = ['../routes/booking.routes.ts', '../routes/profile.routes.ts', '../routes/events.routes.ts'];
-const outputFile = './swagger_output.json'; // Файл, куда сохранится документация const endpointsFiles = ['./routes/*.js']; // Пути к файлам с маршрутами
+const routes = ['../routes/booking.routes.ts', '../routes/events.routes.ts'];
+const outputFile = './swagger_output.json';
 swaggerAutogen(outputFile, routes, doc);

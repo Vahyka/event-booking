@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import styles from './profile.module.css';
 import BookingForm from '../../components/BookingForm';
 import EventSelection from '../../components/EventSelection';
+import { getSeats } from '../../api/seatsService';
 import { Event, Seat, Booking } from '../../types/types';
 import { getUserBookings, createBooking, cancelBooking } from '../../api/bookingService';
 
@@ -16,6 +17,16 @@ export default function Profile() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    const [seats, setSeats] = useState<Seat[]>([]);
+
+    useEffect(() => {
+        if (selectedEvent) {
+          getSeats(selectedEvent.id).then(setSeats);
+        } else {
+          setSeats([]);
+        }
+      }, [selectedEvent]);
+      
     useEffect(() => {
         if (user) {
             loadBookings();

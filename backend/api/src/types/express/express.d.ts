@@ -1,13 +1,10 @@
-import express from "express";
+// src/types/express/index.d.ts
+import { UserAttributes } from '../models/user.model'; // путь подкорректируй под свой проект
 
 declare global {
   namespace Express {
-    export interface Request {
-      user?: {
-        id: string;
-        email: string;
-      }
+    interface Request {
+      user?: UserAttributes; // или другой тип, который ты используешь для пользователя
     }
   }
 }
-

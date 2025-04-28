@@ -1,5 +1,4 @@
 import express from 'express';
-// import http from 'http';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import eventRouter from './routes/events.routes'
@@ -27,7 +26,7 @@ app.use(helmet());
 
 app.use('/api/events', eventRouter);
 app.use('/api/bookings', bookingRouter);
-// app.use('/api/orders', bookingRouter);
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 // Health check
 app.get('/health', (req, res) => {
@@ -43,7 +42,6 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 // Start server
 const PORT = process.env.PORT;
 
-app.use('/api/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.listen(PORT, async () => {
     try {

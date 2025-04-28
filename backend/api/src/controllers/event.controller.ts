@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import Event from '../models/event.model';
+import Seat from '../models/seat.model';
 import { Op } from '@sequelize/core';
 
 export const createEvent = async (req: Request, res: Response) => {
@@ -116,3 +117,4 @@ export const deleteEvent = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Failed to delete event' });
     }
 }; 
+

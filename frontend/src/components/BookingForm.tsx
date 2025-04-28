@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { createBooking } from '../api/bookingService';
 import { Event, Seat } from '../types/types';
 
+
+
 interface BookingFormProps {
   event: Event;
   selectedSeat: Seat | null;
@@ -12,6 +14,7 @@ interface BookingFormProps {
 const BookingForm: React.FC<BookingFormProps> = ({ event, selectedSeat, userId, onBookingSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
