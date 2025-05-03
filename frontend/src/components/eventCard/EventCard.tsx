@@ -8,6 +8,7 @@ interface EventCardProps {
 }
 
 export default function EventCard({ event, onClick }: EventCardProps) {
+  console.log(event.image);
   return (
     <Card 
       className={styles.card}
@@ -16,7 +17,7 @@ export default function EventCard({ event, onClick }: EventCardProps) {
       <CardMedia
         component="img"
         height="140"
-        image={event.image}
+        image={event.image.replace(/^@/, '')}
         alt={event.title}
       />
       <CardContent>

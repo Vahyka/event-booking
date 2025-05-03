@@ -1,28 +1,84 @@
 .container {
     max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
+    margin: 40px auto 0 auto;
+    padding: 32px 16px;
     color: var(--primary-main);
     min-height: 100vh;
+    background: var(--background-default);
+}
+
+.profileCard {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.10);
+    padding: 32px 32px 24px 32px;
+    margin-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.userInfo {
+    margin-bottom: 32px;
+    background: #f7f7f7;
+    border-radius: 8px;
+    padding: 16px 24px;
+    width: 100%;
+}
+
+.sectionTitle {
+    margin-top: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: var(--primary-main);
 }
 
 .bookingItem {
     background: #fff;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    padding: 16px;
+    margin-bottom: 18px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 20px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #ececec;
 }
 
 .bookingItem:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.13);
+    border-color: var(--primary-main);
 }
 
 .bookingItem button {
-    margin-left: 16px;
+    margin-left: 24px;
+    min-width: 120px;
+    font-weight: 500;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 8px;
+    }
+    .profileCard {
+        padding: 16px 8px 12px 8px;
+    }
+    .userInfo {
+        padding: 8px 8px;
+    }
+    .bookingItem {
+        padding: 12px 8px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .bookingItem button {
+        margin-left: 0;
+        margin-top: 12px;
+        width: 100%;
+    }
 }

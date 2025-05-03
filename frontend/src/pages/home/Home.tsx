@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from '@mui/material/Modal';
 import Grid from '@mui/material/Grid';
 import EventCard from '../../components/eventCard/EventCard';
-import SeatPicker from '../../components/seatPicker/SeatPicker';
 import styles from './Home.module.css';
-import { events } from '../../api/mockData';
 import { Event } from '../../types/types';
+import { getEvents } from '../../api/eventService';
 
 export default function Home() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [events, setEvents] = useState<Event[]>([]);
+  useEffect(() => { getEvents().then(setEvents); }, []);
 
   return (
     <div className={styles.container}>
@@ -50,13 +51,9 @@ export default function Home() {
                   Дата: {new Date(selectedEvent.date).toLocaleDateString()} · 
                   Локация: {selectedEvent.location}
                 </p>
-              </div>
-              
-              <div className={styles.seatPickerContainer}>
-                <SeatPicker
-                  seats={selectedEvent.seats}
-                  onSelect={(seatId) => console.log('Выбрано место:', seatId)}
-                />
+                <p>
+
+                </p>
               </div>
             </>
           )}
