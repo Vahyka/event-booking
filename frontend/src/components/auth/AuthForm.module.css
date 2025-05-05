@@ -29,3 +29,11 @@
   margin-top: 10px;
   text-align: center;
 }
+
+:export {
+  button: button;
+  container: container;
+  error: error;
+  form: form;
+  pageContainer: pageContainer;
+}

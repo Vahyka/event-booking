@@ -14,7 +14,11 @@ export function buildPlugins({mode, paths}: BuildOptions) : Configuration['plugi
 
     if (isProd)
     {
-        plugins.push(new MiniCssExtractPlugin());
+        plugins.push(new MiniCssExtractPlugin({
+            filename: 'css/[name].[contenthash:8].css',
+            chunkFilename: 'css/[name].[contenthash:8].css',
+            ignoreOrder: true
+        }));
     }
 
     return plugins

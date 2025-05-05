@@ -1,6 +1,6 @@
 import { Card, CardContent, Typography, CardMedia } from '@mui/material';
 import { Event } from '../../types/types';
-import styles from './EventCard.module.css';
+import * as styles from './EventCard.module.css';
 
 interface EventCardProps {
   event: Event;

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Modal from '@mui/material/Modal';
 import Grid from '@mui/material/Grid';
 import EventCard from '../../components/eventCard/EventCard';
-import styles from './Home.module.css';
+import * as styles from './Home.module.css';
 import { Event } from '../../types/types';
 import { getEvents } from '../../api/eventService';
 

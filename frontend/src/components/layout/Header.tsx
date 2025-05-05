@@ -1,7 +1,7 @@
 import { AppBar, Toolbar, Button } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import styles from './Header.module.css';
+import * as styles from './Header.module.css';
 
 export default function Header() {
   const { isAuthenticated, logout } = useAuth();

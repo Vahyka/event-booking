@@ -4,7 +4,7 @@ import { Profile } from './pages/profile/profile';
 import Header from './components/layout/Header';
 import { ThemeProvider, GlobalStyles } from '@mui/material';
 import theme from "./styles/theme"
-import './styles/global.css'
+import './styles/global.module.css'
 import { AuthProvider } from './contexts/AuthContext';
 import AuthForm from './components/auth/AuthForm';
 import { StoreProvider } from './contexts/StoreContext';

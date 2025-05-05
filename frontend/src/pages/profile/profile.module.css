@@ -82,3 +82,11 @@
         width: 100%;
     }
 }
+
+:export {
+  bookingItem: bookingItem;
+  container: container;
+  profileCard: profileCard;
+  sectionTitle: sectionTitle;
+  userInfo: userInfo;
+}

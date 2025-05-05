@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '../../contexts/StoreContext';
 import { Box, Typography, Paper, List, ListItem, ListItemText, CircularProgress, Button, Dialog } from '@mui/material';
-import styles from './profile.module.css';
+import * as styles from './profile.module.css';
 import BookingForm from '../../components/BookingForm';
 import EventSelection from '../../components/EventSelection';
 import { getSeats } from '../../api/seatsService';
