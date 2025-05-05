@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '../services/authService';
 import { useStore } from './StoreContext';
@@ -15,19 +14,11 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   login: (user: User) => void;
-=======
-import { createContext, useContext, useState, ReactNode } from 'react';
-
-interface AuthContextType {
-  isAuthenticated: boolean;
-  login: () => void;
->>>>>>> 33b1af3 (smth)
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-<<<<<<< HEAD
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { userStore } = useStore();
   // Восстанавливаем состояние из localStorage при инициализации
@@ -130,34 +121,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 };
 
 export const useAuth = () => {
-=======
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  const login = () => {
-    setIsAuthenticated(true);
-  };
-
-  const logout = () => {
-    setIsAuthenticated(false);
-  };
-
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
-
-export function useAuth() {
->>>>>>> 33b1af3 (smth)
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-<<<<<<< HEAD
-}; 
-=======
-} 
->>>>>>> 33b1af3 (smth)
+};
