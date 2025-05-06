@@ -14,6 +14,6 @@ router.get('/bookings', getUserBookings as unknown as RequestHandler);
 
 router.get('/bookings/:id', getBookingDetails as unknown as RequestHandler);
 
-router.put('/bookings/:id/cancel', cancelBooking as unknown as RequestHandler);
+router.put('/bookings/:eventId/cancel', cancelBooking as unknown as RequestHandler);
 
 export default router; 

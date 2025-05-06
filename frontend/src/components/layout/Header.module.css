@@ -22,3 +22,11 @@
 .spacer {
   flex-grow: 1;
 }
+
+:export {
+  header: header;
+  toolbar: toolbar;
+  leftSection: leftSection;
+  rightSection: rightSection;
+  spacer: spacer;
+}

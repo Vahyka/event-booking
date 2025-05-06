@@ -11,3 +11,8 @@
   .image {
     object-fit: cover;
   }
+
+:export {
+  card: card;
+  image: image;
+}

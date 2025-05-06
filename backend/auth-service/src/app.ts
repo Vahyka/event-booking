@@ -5,6 +5,9 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import sequelize from './config/db.config';
 import authRoute from './routes/auth.routes';
+import swaggerUi from 'swagger-ui-express';
+import swaggerFile from './config/swagger_output.json';
+import cookieParser from 'cookie-parser';
 
 // Load environment variables
 dotenv.config();
@@ -14,6 +17,7 @@ const app = express();
 
 // Security middleware
 app.use(helmet());
+app.use(cookieParser());
 
 // CORS configuration
 app.use(cors({
@@ -29,6 +33,8 @@ app.use(morgan('dev'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {

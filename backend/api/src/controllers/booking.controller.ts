@@ -30,7 +30,7 @@ export const createBooking = async (req: Request, res: Response) => {
         // Проверяем существование места
         const seat = await Seat.findOne({
             where: {
-                seatNumber: seatId,
+                id: seatId,
                 eventId: eventId
             }
         });
@@ -101,7 +101,11 @@ export const cancelBooking = async (req: Request, res: Response) => {
             return res.status(404).json({ message: 'Booking not found' });
         }
 
-        // booking.status = 'cancelled';
+        const seat = await Seat.findByPk(booking.seatId);
+        if (seat) {
+            await seat.update({ status: 'available' });
+        }
+
         await booking.destroy();
         await booking.save();
 

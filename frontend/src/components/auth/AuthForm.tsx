@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService, LoginData, RegisterData } from '../../services/authService';
 import { useAuth } from '../../contexts/AuthContext';
-import styles from './AuthForm.module.css';
+import * as styles from './AuthForm.module.css';
 
 type AuthType = 'login' | 'register';
 

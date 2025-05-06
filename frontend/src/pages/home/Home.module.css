@@ -83,3 +83,14 @@
       font-size: 1rem;
     }
   }
+
+:export {
+  container: container;
+  eventsGrid: eventsGrid;
+  modalContent: modalContent;
+  modalDescription: modalDescription;
+  modalHeader: modalHeader;
+  modalTitle: modalTitle;
+  seatPickerContainer: seatPickerContainer;
+  title: title;
+}

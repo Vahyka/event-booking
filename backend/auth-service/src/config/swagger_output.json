@@ -1,0 +1,168 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "My Auth Service",
+    "description": "Description",
+    "version": "1.0.0"
+  },
+  "host": "localhost:5004",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "description": "Register a new user",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "description": "User registration data",
+            "required": true,
+            "schema": { "$ref": "#/definitions/User" }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User registered successfully",
+            "schema": { "$ref": "#/definitions/User" }
+          },
+          "400": { "description": "Invalid input or user already exists" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "description": "Login user and return tokens",
+        "parameters": [
+          {
+            "name": "credentials",
+            "in": "body",
+            "description": "User login credentials",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": { "type": "string" },
+                "password": { "type": "string" }
+              },
+              "required": ["email", "password"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login successful, returns tokens",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "accessToken": { "type": "string" },
+                "refreshToken": { "type": "string" },
+                "user": { "$ref": "#/definitions/User" }
+              }
+            }
+          },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/auth/verify-token": {
+      "post": {
+        "description": "Verify access token",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "body",
+            "description": "Access token to verify",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": { "type": "string" }
+              },
+              "required": ["token"]
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Token is valid" },
+          "401": { "description": "Token is invalid or expired" }
+        }
+      }
+    },
+    "/auth/refresh-token": {
+      "post": {
+        "description": "Refresh access token",
+        "parameters": [
+          {
+            "name": "refreshToken",
+            "in": "body",
+            "description": "Refresh token",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "refreshToken": { "type": "string" }
+              },
+              "required": ["refreshToken"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "New access and refresh tokens",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "accessToken": { "type": "string" },
+                "refreshToken": { "type": "string" }
+              }
+            }
+          },
+          "401": { "description": "Invalid refresh token" }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "description": "Logout user (invalidate refresh token)",
+        "parameters": [
+          {
+            "name": "refreshToken",
+            "in": "body",
+            "description": "Refresh token to invalidate",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "refreshToken": { "type": "string" }
+              },
+              "required": ["refreshToken"]
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Logout successful" },
+          "401": { "description": "Invalid refresh token" }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "username": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "admin"] },
+        "password": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["username", "name", "email", "password"]
+    }
+  }
+}

@@ -1,32 +1,28 @@
 import { Request, Response } from 'express';
 import Seat from '../models/seat.model';
 import Event from '../models/event.model';
-// import { Op } from '@sequelize/core';
 
 export const getEventSeats = async (req: Request, res: Response) => {
+    console.log('getEventSeats params:', req.params, req.query);
+
     try {
-        const { eventId } = req.params;
-        const { status } = req.query;
-
-        const where: any = { eventId };
-        
-        if (status) {
-            where.status = status;
-        }
-
-        const seats = await Seat.findAll({
-            where,
-            include: [{
-                model: Event,
-                attributes: ['title', 'date', 'location']
-            }],
-            order: [['seatNumber', 'ASC']]
-        });
-
-        res.json(seats);
+      const { id } = req.params; // <-- исправлено
+      const { status } = req.query;
+      const where: any = { eventId: id }; // <-- исправлено
+      if (status) {
+        where.status = status;
+      }
+  
+      const seats = await Seat.findAll({
+        where,
+        order: [['seatNumber', 'ASC']],
+        attributes: ['id', 'eventId', 'seatNumber', 'status', 'createdAt', 'updatedAt'],
+      });
+  
+      res.json(seats);
     } catch (error) {
-        console.error('Error fetching seats:', error);
-        res.status(500).json({ error: 'Failed to fetch seats' });
+      console.error('Error fetching seats:', error);
+      res.status(500).json({ error: 'Failed to fetch seats' });
     }
 };
 

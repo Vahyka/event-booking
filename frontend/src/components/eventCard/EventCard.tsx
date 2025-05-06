@@ -1,6 +1,6 @@
 import { Card, CardContent, Typography, CardMedia } from '@mui/material';
 import { Event } from '../../types/types';
-import styles from './EventCard.module.css';
+import * as styles from './EventCard.module.css';
 
 interface EventCardProps {
   event: Event;
@@ -8,6 +8,7 @@ interface EventCardProps {
 }
 
 export default function EventCard({ event, onClick }: EventCardProps) {
+  console.log(event.image);
   return (
     <Card 
       className={styles.card}
@@ -16,7 +17,7 @@ export default function EventCard({ event, onClick }: EventCardProps) {
       <CardMedia
         component="img"
         height="140"
-        image={event.image}
+        image={event.image.replace(/^@/, '')}
         alt={event.title}
       />
       <CardContent>

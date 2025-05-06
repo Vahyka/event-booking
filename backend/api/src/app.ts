@@ -1,14 +1,14 @@
 import express from 'express';
-// import http from 'http';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import eventRouter from './routes/events.routes'
 import morgan from 'morgan';
 import helmet from 'helmet';
-import profileRoutes from './routes/profile.routes';
 import { testConnection} from './config/db.config';
 import bookingRouter from './routes/booking.routes';
 import sequelize from './config/db.config';
+import swaggerUi from 'swagger-ui-express';
+import swaggerFile from './config/swagger_output.json';
 
 const app = express();
 dotenv.config();
@@ -17,7 +17,7 @@ dotenv.config();
 app.use(express.json());
 
 app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin: process.env.CLIENT_URL,
     credentials: true,
 }));
 
@@ -25,9 +25,8 @@ app.use(morgan('dev'));
 app.use(helmet());
 
 app.use('/api/events', eventRouter);
-app.use('/api/profile', profileRoutes);
 app.use('/api/bookings', bookingRouter);
-// app.use('/api/orders', bookingRouter);
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 // Health check
 app.get('/health', (req, res) => {
@@ -42,6 +41,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 // Start server
 const PORT = process.env.PORT;
+
 
 app.listen(PORT, async () => {
     try {
